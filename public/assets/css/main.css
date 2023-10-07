@@ -1,0 +1,41 @@
+#app {
+    background: black;
+}
+
+#videoPlayer {
+    width: 60%!important;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#video {
+    width: 100%;
+}
+
+.video-track {
+    height: 5px;
+    width: 100%;
+    background-color: #b6b6b6;
+}
+
+.timeline {
+    height: 5px;
+    width: 0;
+    background-color: #58b4ff
+}
+
+.buttons {
+    padding: 5px 0;
+}
+
+.slider {
+    width: 500px!important;
+    bottom: 150px!important;
+    top: auto!important;
+    margin-left: 12%!important;
+    opacity: 50%!important;
+}
+
+.slider-text {
+    cursor: pointer;
+}

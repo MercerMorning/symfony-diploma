@@ -1,0 +1,9 @@
+2023/10/07 12:44:49 [emerg] 1#1: open() "/etc/nginx/server_name.conf" failed (2: No such file or directory) in /etc/nginx/sites-enabled/default.conf:4
+2023/10/07 12:44:51 [emerg] 1#1: open() "/etc/nginx/server_name.conf" failed (2: No such file or directory) in /etc/nginx/sites-enabled/default.conf:4
+2023/10/07 12:44:53 [emerg] 1#1: open() "/etc/nginx/server_name.conf" failed (2: No such file or directory) in /etc/nginx/sites-enabled/default.conf:4
+2023/10/07 12:44:54 [emerg] 1#1: open() "/etc/nginx/server_name.conf" failed (2: No such file or directory) in /etc/nginx/sites-enabled/default.conf:4
+2023/10/07 12:44:56 [emerg] 1#1: open() "/etc/nginx/server_name.conf" failed (2: No such file or directory) in /etc/nginx/sites-enabled/default.conf:4
+2023/10/07 12:44:59 [emerg] 1#1: open() "/etc/nginx/server_name.conf" failed (2: No such file or directory) in /etc/nginx/sites-enabled/default.conf:4
+2023/10/07 12:45:03 [emerg] 1#1: open() "/etc/nginx/server_name.conf" failed (2: No such file or directory) in /etc/nginx/sites-enabled/default.conf:4
+2023/10/07 12:45:10 [emerg] 1#1: open() "/etc/nginx/server_name.conf" failed (2: No such file or directory) in /etc/nginx/sites-enabled/default.conf:4
+2023/10/07 12:45:24 [emerg] 1#1: open() "/etc/nginx/server_name.conf" failed (2: No such file or directory) in /etc/nginx/sites-enabled/default.conf:4

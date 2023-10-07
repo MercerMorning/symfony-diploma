@@ -1,0 +1,13 @@
+version: "3.3"
+
+services:
+
+  php:
+    restart: always
+    build: php-fpm
+    ports:
+      - '8000:8000'
+    volumes:
+      - ../:/app
+      - ./php-fpm/php.ini:/usr/local/etc/php/php.ini
+

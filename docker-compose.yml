@@ -1,0 +1,72 @@
+version: '3'
+
+services:
+###> doctrine/doctrine-bundle ###
+  database:
+    image: postgres:${POSTGRES_VERSION:-13}-alpine
+    environment:
+      POSTGRES_DB: symfony
+      # You should definitely change the password in production
+      POSTGRES_PASSWORD: symfony
+      POSTGRES_USER: symfony
+    networks:
+      - app-network
+    volumes:
+      - db-data:/var/lib/postgresql/data:rw
+      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
+      # - ./docker/db/data:/var/lib/postgresql/data:rw
+###< doctrine/doctrine-bundle ###
+
+  app:
+    build:
+      context: ./
+      dockerfile: ./docker/app/Dockerfile
+      args:
+        user: web
+#        uid: ${UID}
+    container_name: filmMaker
+    restart: unless-stopped
+    working_dir: /var/www
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    volumes:
+      - ./:/var/www
+      - ./docker/app/php.ini:/usr/local/etc/php/php.ini
+    networks:
+      - app-network
+
+    # Nginx Service
+  webserver:
+      image: nginx:stable-alpine
+      container_name: filmmaker--webserver
+      restart: unless-stopped
+      volumes:
+        - ./:/var/www
+#        - ./docker/config/ssl/:/etc/nginx/ssl
+        - ./docker/config/nginx/sites-enabled/:/etc/nginx/conf.d
+        - ./docker/config/nginx/sites-enabled/:/etc/nginx/sites-available
+        - ./docker/config/nginx/sites-enabled/:/etc/nginx/sites-enabled
+#        - ./docker/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+#        - ./docker/config/nginx/common_deny.conf:/etc/nginx/common_deny.conf
+#        - ./docker/config/nginx/server_name.conf:/etc/nginx/server_name.conf
+#        - ./docker/config/nginx/ssl_certificate.conf:/etc/nginx/ssl_certificate.conf
+#        - ./docker/config/nginx/fastcgi_params:/etc/nginx/fastcgi_params
+#        - ./docker/config/nginx/proxy_params:/etc/nginx/proxy_params
+#        - ./docker/logs/nginx:/var/log/nginx
+      ports:
+        - "80:80"
+        - "443:443"
+      networks:
+        - app-network
+      depends_on:
+        - app
+
+
+volumes:
+###> doctrine/doctrine-bundle ###
+  db-data:
+###< doctrine/doctrine-bundle ###
+networks:
+  app-network:
+    driver: bridge

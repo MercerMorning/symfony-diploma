@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="app">
+        <div id="videoPlayer">
+            <video id="video" src="/videos/1.mp4"></video>
+            <div id="controls">
+                <div class="video-track">
+                    <div class="timeline"></div>
+                </div>
+                <div class="buttons">
+                    <button class="play">Play</button>
+                    <button class="pause">Pause</button>
+                    <button class="rewind">&#60;Rewind</button>
+                    <button class="forward">Forward&#62;</button>
+                    <button class="edit">Edit&#62;</button>
+                </div>
+            </div>
+        </div>
+        <div id="variants-window">
+            <form v-on:submit.prevent="send" id="sendForm">
+                <div v-for="(value, name) in variants">
+                    <input title="Вариант" name="variant" type="text">
+                    <input title="Видео" name="file" type="file">
+                </div>
+                <div id="add-variant" v-on:click="variants.push(1)">
+                    Добавить
+                </div>
+                <input type="submit">
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('test_editor') }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+{% endblock %}

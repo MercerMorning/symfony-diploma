@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {% for video in videos %}
+        <a href="{{ path('watch.player', {video: video.name}) }}">
+            {{ video.name }}
+        </a>
+    {% endfor %}
+{% endblock %}

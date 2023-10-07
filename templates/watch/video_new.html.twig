@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="app">
+        <player
+                video-file="{{ video.file }}"
+                video-name="{{ video.name }}">
+        </player>
+
+{#        <slider animation="fade">#}
+{#            <slider-item#}
+{#            >#}
+{#                <p style="line-height: 280px; font-size: 5rem; text-align: center;">page 1</p>#}
+{#            </slider-item>#}
+{#            <slider-item#}
+{#            >#}
+{#                <p style="line-height: 280px; font-size: 5rem; text-align: center;">page 2</p>#}
+{#            </slider-item>#}
+{#        </slider>#}
+    </div>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('player') }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .slider {
+            position: absolute!important;
+            top: 0px!important;
+            height: 100px!important;
+            width: 100% !important;
+            /* color: blue; */
+            background: white!important;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
+{% endblock %}

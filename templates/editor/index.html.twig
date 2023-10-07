@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="videoPlayer">
+        <player video-file="{{ video_file }}" current-video="{{ video_name }}"> </player>
+    </div>
+    <div>
+        <h2>Исходы</h2>
+        {% for next_video in refs.next_videos %}
+            <a href="{{ path('app_editor', {video: next_video.name}) }}">
+                {{ next_video.name }}
+            </a>
+            <br>
+        {% endfor %}
+        <h2>Прошлый кадр</h2>
+        {% if refs.previous_video is not empty %}
+            <a href="{{ path('app_editor', {video: refs.previous_video.name}) }}">
+                {{ refs.previous_video.name }}
+            </a>
+        {% endif %}
+    </div>
+
+    <script>
+        localStorage.setItem('currentVideo', '{{ video_name }}');
+    </script>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('test_editor') }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
+{% endblock %}
+{# <script src="/assets/js/app.js"></script> #}

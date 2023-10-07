@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/assets/css/main.css" type="text/css"/>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<div id="videoPlayer">
+    <video id="video" src="/videos/{{ video }}.mp4"></video>
+    <div id="controls">
+        <div class="video-track" style="display: none">
+            <div class="timeline"></div>
+        </div>
+        <div class="buttons">
+            <button class="play">Play</button>
+            <button class="pause">Pause</button>
+            <button class="rewind">&#60;Rewind</button>
+            <button class="forward">Forward&#62;</button>
+            <button class="edit">Edit&#62;</button>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    let currentVideo = '{{ video }}';
+
+    let video = document.getElementById("video");            // Получаем элемент video
+    let videoTrack = document.querySelector(".video-track"); // Получаем элемент Видеодорожки
+    let time = document.querySelector(".timeline");          // Получаем элемент времени видео
+    let btnPlay = document.querySelector(".play");           // Получаем кнопку проигрывания
+    let btnPause = document.querySelector(".pause");         // Получаем кнопку паузы
+    let btnRewind = document.querySelector(".rewind");       // Получаем кнопки перемотки назад
+    let btnForward = document.querySelector(".forward");
+    let btnEdit = document.querySelector(".edit");
+
+    btnPlay.addEventListener("click", function () {
+        video.play(); // Запуск проигрывания
+        // Запуск интервала
+        videoPlay = setInterval(function () {
+            // Создаём переменную времени видел
+            let videoTime = Math.round(video.currentTime)
+            // Создаём переменную всего времени видео
+            let videoLength = Math.round(video.duration)
+            // Вычисляем длину дорожки
+            time.style.width = (videoTime * 100) / videoLength + '%';
+        }, 10)
+    });
+
+    btnPause.addEventListener("click", function () {
+        video.pause(); // Останавливает воспроизведение
+        clearInterval(videoPlay) // убирает работу интервала
+    });
+
+    // Нажимаем на кнопку перемотать назад
+    btnRewind.addEventListener("click", function () {
+        video.currentTime -= 5; // Уменьшаем время на пять секунд
+    });
+
+    // Нажимаем на кнопку перемотать вперёд
+    btnForward.addEventListener("click", function () {
+        video.currentTime += 5; // Увеличиваем время на пять секунд
+    });
+
+    videoTrack.addEventListener("click", function (e) {
+        let posX = e.clientX - 8; // Вычисляем позицию нажатия
+        let timePos = (posX * 100) / 800; // Вычисляем процент перемотки
+        time.style.width = timePos + '%'; // Присваиваем процент перемотки
+        video.currentTime = (timePos * Math.round(video.duration)) / 100 // Перематываем
+    });
+
+    video.addEventListener('ended', (event) => {
+        console.log(currentVideo);
+        fetch('/watch/' + currentVideo + '/variants', {
+            method: 'POST'
+        }).then((response) => {
+            return response.json();
+        })
+            .then((data) => {
+                // location.reload()
+                currentVideo = prompt('Вариант?');
+                console.log(data['variants'][currentVideo]);
+                this.videoFile = data.current_video_file;
+                // this.cases = data.current_cases
+            });
+        // videoName = localStorage.getItem(variant)
+        // video.setAttribute('src', '/videos/' + videoName + '.mp4');
+        // video.play()
+    });
+</script>
+</html>
