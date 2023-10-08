@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Login Form</title>
+</head>
+<body>
+<form id="login-form">
+    <label for="login">Login:</label>
+    <input type="text" id="login" name="login" required><br><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <input type="submit" value="Submit">
+</form>
+
+<script>
+    document.getElementById("login-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const login = document.getElementById("login").value;
+        const password = document.getElementById("password").value;
+
+        // Создаем строку для Basic Authentication
+        const base64Credentials = btoa(`${login}:${password}`);
+
+        fetch("http://localhost/token", {
+            method: "POST",
+            headers: {
+                "Authorization": `Basic ${base64Credentials}`,
+            },
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    throw new Error("Ошибка");
+                }
+            })
+            .then(data => {
+                // Получаем токен из ответа
+                const token = data.token;
+                // Сохраняем токен в куки
+                document.cookie = `token=${token}`;
+                window.location.href = "/editor/add";
+            })
+            .catch(error => {
+                alert(error.message);
+            });
+    });
+</script>
+</body>
+</html>

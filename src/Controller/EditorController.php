@@ -9,26 +9,38 @@ use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use FFMpeg\Format\Video\X264;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Security;
 
 class EditorController extends AbstractController
 {
     protected $parameterBag;
+    private Security $securityBundle;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
-    public function __construct(ParameterBagInterface $parameterBag)
+    public function __construct(
+        ParameterBagInterface $parameterBag,
+        Security $securityBundle,
+        AuthorizationCheckerInterface $authorizationChecker
+    )
     {
         $this->parameterBag = $parameterBag;
+        $this->securityBundle = $securityBundle;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
-    #[Route('/editor/test', name: 'test')]
-    public function test()
-    {
-        return $this->render('editor/test_editor.html.twig');
-    }
+//    #[Route('/editor/test', name: 'test')]
+//    public function test()
+//    {
+//        return $this->render('editor/test_editor.html.twig');
+//    }
 
     #[Route('/watch/{video}/player', name: 'watch.player')]
     public function watchPlayer($video, ManagerRegistry $doctrine)
@@ -110,6 +122,9 @@ class EditorController extends AbstractController
         $generalVideo = $repository->findOneBy([
            'name' => $video
         ]);
+        if (!$this->authorizationChecker->isGranted('EDIT', $generalVideo)) {
+            return new JsonResponse('Access denied', Response::HTTP_FORBIDDEN);
+        }
         $previousVideo = $repository->findOneBy([
             'id' => $generalVideo->getPreviousVideoId()
         ]);
@@ -126,6 +141,9 @@ class EditorController extends AbstractController
         ]);
     }
 
+    /*
+     * Роут для создания видео
+     */
     #[Route('/editor/add', methods: ['GET', 'POST'], name: 'video_add')]
     public function add(Request $request, ManagerRegistry $doctrine)
     {
@@ -140,6 +158,7 @@ class EditorController extends AbstractController
              */
             $name = $form->get('name')->getData();
             $video = new Video();
+            $video->setUser($this->securityBundle->getUser());
             $video->setName($name);
             /**
              * @var $file UploadedFile
@@ -188,6 +207,7 @@ class EditorController extends AbstractController
             $file->move($videoPath, $newFilename);
 
             $newVideo = new Video();
+            $newVideo->setUser($this->securityBundle->getUser());
             $newVideo->setName($variant);
             $newVideo->setFile($variant);
             $newVideo->setPreviousVideoId($currentVideoDb->getId());

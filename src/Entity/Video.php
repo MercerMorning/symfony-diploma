@@ -27,6 +27,11 @@ class Video
     #[ORM\Column(nullable: true)]
     private ?int $previous_video_id = null;
 
+    #[
+        ORM\ManyToOne(targetEntity: "User"),
+        ORM\JoinColumn(name: "user_id", referencedColumnName: "id")
+    ]
+    private User $user;
 
     public function getId(): ?int
     {
@@ -80,4 +85,22 @@ class Video
 
         return $this;
     }
+
+    /**
+     * @return User
+     */
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User $user
+     */
+    public function setUser(User $user): void
+    {
+        $this->user = $user;
+    }
+
+
 }
