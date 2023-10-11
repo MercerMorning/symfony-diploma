@@ -58,8 +58,18 @@ Vue.component('player', {
       <div id="variants-window" v-if="turn_edit">
         <form v-on:submit.prevent="send" id="sendForm">
           <div v-for="(value, name) in variants">
+            <br>
+            Вариант
             <input title="Вариант" v-bind:name="'video[' + name + '][variant]'" type="text">
+            <br>
+            Видео
             <input title="Видео" v-bind:name="'video[' + name + '][file]'" type="file">
+            <br>
+            Аудио
+            <input title="Аудио" v-bind:name="'audio[' + name + '][file]'" type="file">
+            <br>
+            Громкость звука
+            <input title="Громкость звука" v-bind:name="'loud[' + name + '][file]'" type="number">
           </div>
           <div id="add-variant" v-on:click="variants.push(1)">
             Добавить

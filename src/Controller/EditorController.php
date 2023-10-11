@@ -203,9 +203,24 @@ class EditorController extends AbstractController
             $file = $request->files->get('video')[$variantKey]['file'];
             $newFilename = $variant . '.mp4';
 
+            $audio = $request->files->get('audio')[$variantKey]['file'];
+            $newAudioName = $variant . '.mp3';
+            $audioPath = $path . '/public/audios/';
+            $audio->move($audioPath, $newAudioName);
+
+
             $videoPath = $path . '/public/videos/';
             $file->move($videoPath, $newFilename);
-
+            $command  = 'ffmpeg \
+-i '. $videoPath . $newFilename .' \
+-filter_complex "amovie=' . $audioPath . $newAudioName . ':loop=0,asetpts=N/SR/TB[over]; [0][over]amix=duration=shortest" \
+-c:v copy \
+' . $videoPath  . $newFilename;
+//            $command = "ffmpeg -i " . $videoPath . $newFilename .
+//                " -i " . $audioPath . $newAudioName . " -c:v copy -c:a aac -strict experimental " .
+//                $videoPath . $newFilename;
+// Выполняем команду
+//            dd($variant);
             $newVideo = new Video();
             $newVideo->setUser($this->securityBundle->getUser());
             $newVideo->setName($variant);
@@ -223,7 +238,7 @@ class EditorController extends AbstractController
         $currentVideo
             ->clip(TimeCode::fromSeconds(0), TimeCode::fromSeconds($stopSecond))
             ->save(new X264(), 'videos/' . $newCurrentVideoName . '.mp4');
-
+        
         $currentVideoDb->setFile($newCurrentVideoName);
         $entityManager->persist($currentVideoDb);
         $entityManager->flush();
