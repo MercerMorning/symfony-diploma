@@ -215,16 +215,22 @@ class EditorController extends AbstractController
 -i '. $videoPath . $newFilename .' \
 -filter_complex "amovie=' . $audioPath . $newAudioName . ':loop=0,asetpts=N/SR/TB[over]; [0][over]amix=duration=shortest" \
 -c:v copy \
-' . $videoPath  . $newFilename;
+' . $videoPath  . '333' . $newFilename;
 //            $command = "ffmpeg -i " . $videoPath . $newFilename .
 //                " -i " . $audioPath . $newAudioName . " -c:v copy -c:a aac -strict experimental " .
 //                $videoPath . $newFilename;
 // Выполняем команду
 //            dd($variant);
+            exec($command);
+
+            $command  = 'ffmpeg -i '. $videoPath . $newFilename .' -af "volume=enable=\'between(t,10,20)\':volume=0.2" -c:v copy ' . $videoPath . '222' . $newFilename;
+            dd($command);
+            exec($command);
+            dd('gnom');
             $newVideo = new Video();
             $newVideo->setUser($this->securityBundle->getUser());
             $newVideo->setName($variant);
-            $newVideo->setFile($variant);
+            $newVideo->setFile('333' . $newFilename);
             $newVideo->setPreviousVideoId($currentVideoDb->getId());
 
             $entityManager->persist($newVideo);
