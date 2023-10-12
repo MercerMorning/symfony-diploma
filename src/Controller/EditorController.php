@@ -200,37 +200,51 @@ class EditorController extends AbstractController
 
         foreach ($variants as $variantKey => $variant) {
             $variant = $variant['variant'];
+
             $file = $request->files->get('video')[$variantKey]['file'];
             $newFilename = $variant . '.mp4';
 
-            $audio = $request->files->get('audio')[$variantKey]['file'];
-            $newAudioName = $variant . '.mp3';
-            $audioPath = $path . '/public/audios/';
-            $audio->move($audioPath, $newAudioName);
+
 
 
             $videoPath = $path . '/public/videos/';
             $file->move($videoPath, $newFilename);
-            $command  = 'ffmpeg \
+
+            if ($request->files->get('audio')) {
+                $audio = $request->files->get('audio')[$variantKey]['file'];
+                $newAudioName = $variant . '.mp3';
+                $audioPath = $path . '/public/audios/';
+                $audio->move($audioPath, $newAudioName);
+                $command  = 'ffmpeg \
 -i '. $videoPath . $newFilename .' \
 -filter_complex "amovie=' . $audioPath . $newAudioName . ':loop=0,asetpts=N/SR/TB[over]; [0][over]amix=duration=shortest" \
 -c:v copy \
-' . $videoPath  . '333' . $newFilename;
-//            $command = "ffmpeg -i " . $videoPath . $newFilename .
-//                " -i " . $audioPath . $newAudioName . " -c:v copy -c:a aac -strict experimental " .
-//                $videoPath . $newFilename;
-// Выполняем команду
-//            dd($variant);
-            exec($command);
+' . $videoPath  . 'audio_' . $newFilename;
+                exec($command);
+                $newFilename = 'audio_' . $newFilename;
+                sleep(1);
+            }
+//            dd(isset($request->request->all()['loud']));
+            if (isset($request->request->all()['loud'])) {
+//                $loud = $request->request->get('loud') / 100;
+                $loud =$request->request->all()['loud'][$variantKey]['file'] / 100;
+                $command  = 'ffmpeg -i '. $videoPath . $newFilename .' -af "volume=enable=\'between(t,10,20)\':volume=0.2" -c:v copy ' . $videoPath . 'loud_' . $newFilename;
+                exec($command);
+                $newFilename = 'loud_' . $newFilename;
+                sleep(1);
+            }
 
-            $command  = 'ffmpeg -i '. $videoPath . $newFilename .' -af "volume=enable=\'between(t,10,20)\':volume=0.2" -c:v copy ' . $videoPath . '222' . $newFilename;
-            dd($command);
-            exec($command);
-            dd('gnom');
+
+
+//            $command  = 'ffmpeg -i '. $videoPath . $newFilename .' -af "volume=enable=\'between(t,10,20)\':volume=0.2" -c:v copy ' . $videoPath . '222' . $newFilename;
+//            dd($command);
+//            exec($command);
+//            dd('gnom');
             $newVideo = new Video();
             $newVideo->setUser($this->securityBundle->getUser());
             $newVideo->setName($variant);
-            $newVideo->setFile('333' . $newFilename);
+//            $newVideo->setFile(str_replace('.mp4', '', $newFilename));
+            $newVideo->setFile(str_replace('.mp4', '', $newFilename));
             $newVideo->setPreviousVideoId($currentVideoDb->getId());
 
             $entityManager->persist($newVideo);
