@@ -228,7 +228,7 @@ class EditorController extends AbstractController
             if (isset($request->request->all()['loud'])) {
 //                $loud = $request->request->get('loud') / 100;
                 $loud =$request->request->all()['loud'][$variantKey]['file'] / 100;
-                $command  = 'ffmpeg -i '. $videoPath . $newFilename .' -af "volume=enable=\'between(t,10,20)\':volume=0.2" -c:v copy ' . $videoPath . 'loud_' . $newFilename;
+                $command  = 'ffmpeg -i '. $videoPath . $newFilename .' -af "volume=enable=\'between(t,10,20)\':volume=' . $loud .'" -c:v copy ' . $videoPath . 'loud_' . $newFilename;
                 exec($command);
                 $newFilename = 'loud_' . $newFilename;
                 sleep(1);
