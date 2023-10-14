@@ -13,8 +13,7 @@ class LoginController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
          if ($this->getUser()) {
-             dd(1);
-             return $this->redirectToRoute('target_path');
+             return $this->redirectToRoute('video_add');
          }
 
         // get the login error if there is one

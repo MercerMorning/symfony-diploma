@@ -50,6 +50,17 @@ RUN pecl install redis && docker-php-ext-enable redis
 #EXIF
 RUN docker-php-ext-install exif
 
+
+RUN apt-get update && apt-get install -y \
+    librabbitmq-dev \
+    libssh-dev \
+    && docker-php-source extract \
+    && docker-php-ext-install sockets \
+    && docker-php-source delete
+
+RUN pecl install amqp \
+    && docker-php-ext-enable amqp
+
 #NPM STUFF SETUP
 RUN rm -fr ./node_modules \
 RUN npm install
