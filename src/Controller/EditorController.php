@@ -210,8 +210,8 @@ class EditorController extends AbstractController
             $videoPath = $path . '/public/videos/';
             $file->move($videoPath, $newFilename);
 
-            if ($request->files->get('audio')) {
-                $audio = $request->files->get('audio')[$variantKey]['file'];
+            $audio = $request->files->get('video')[$variantKey]['audio'] ?? null;
+            if ($audio) {
                 $newAudioName = $variant . '.mp3';
                 $audioPath = $path . '/public/audios/';
                 $audio->move($audioPath, $newAudioName);
@@ -220,26 +220,31 @@ class EditorController extends AbstractController
 -filter_complex "amovie=' . $audioPath . $newAudioName . ':loop=0,asetpts=N/SR/TB[over]; [0][over]amix=duration=shortest" \
 -c:v copy \
 ' . $videoPath  . 'audio_' . $newFilename;
+
                 exec($command);
+
                 $newFilename = 'audio_' . $newFilename;
                 sleep(1);
             }
+            $loud = $request->request->all()['video'][$variantKey]['loud'] ?? null;
 //            dd(isset($request->request->all()['loud']));
-            if (isset($request->request->all()['loud'])) {
+//            $loud = $request->request->get('video')[$variantKey]['loud'];
+            if ($loud) {
 //                $loud = $request->request->get('loud') / 100;
-                $loud =$request->request->all()['loud'][$variantKey]['file'] / 100;
+                $loud = $loud / 100;
                 $command  = 'ffmpeg -i '. $videoPath . $newFilename .' -af "volume=enable=\'between(t,10,20)\':volume=' . $loud .'" -c:v copy ' . $videoPath . 'loud_' . $newFilename;
                 exec($command);
                 $newFilename = 'loud_' . $newFilename;
                 sleep(1);
             }
-
+//            dd($newFilename);
 
 
 //            $command  = 'ffmpeg -i '. $videoPath . $newFilename .' -af "volume=enable=\'between(t,10,20)\':volume=0.2" -c:v copy ' . $videoPath . '222' . $newFilename;
 //            dd($command);
 //            exec($command);
 //            dd('gnom');
+//            dump($newFilename); continue;
             $newVideo = new Video();
             $newVideo->setUser($this->securityBundle->getUser());
             $newVideo->setName($variant);
@@ -250,7 +255,7 @@ class EditorController extends AbstractController
             $entityManager->persist($newVideo);
             $entityManager->flush();
         }
-
+//        dd(123);
         $newCurrentVideoName = $currentVideoName . '_' . uniqid();
         $currentVideoPath = $path . '/public/videos/' . $currentVideoName . '.mp4';
         $ffmpeg = FFMpeg::create();

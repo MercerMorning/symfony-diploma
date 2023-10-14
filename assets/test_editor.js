@@ -66,10 +66,10 @@ Vue.component('player', {
             <input title="Видео" v-bind:name="'video[' + name + '][file]'" type="file">
             <br>
             Аудио
-            <input title="Аудио" v-bind:name="'audio[' + name + '][file]'" type="file">
+            <input title="Аудио" v-bind:name="'video[' + name + '][audio]'" type="file">
             <br>
             Громкость звука
-            <input title="Громкость звука" v-bind:name="'loud[' + name + '][file]'" type="number">
+            <input title="Громкость звука" v-bind:name="'video[' + name + '][loud]'" type="number">
           </div>
           <div id="add-variant" v-on:click="variants.push(1)">
             Добавить
