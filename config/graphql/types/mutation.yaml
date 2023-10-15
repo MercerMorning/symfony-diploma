@@ -1,0 +1,39 @@
+Mutation:
+  type: object
+  config:
+    fields:
+      CreateUser:
+        type: CreateUserPayload!
+        resolve: "@=mutation('create_user', [args['input']])"
+        args:
+          input:
+            type: CreateUserInput!
+
+CreateUserPayload:
+  type: object
+  config:
+    fields:
+      user:
+        type: User
+      message:
+        type: String
+      # Другие поля результата, которые вам нужны
+
+CreateUserInput:
+  type: input-object
+  config:
+    fields:
+      login:
+        type: String!
+      password:
+        type: String!
+      # Другие поля, если необходимо
+
+User:
+  type: object
+  config:
+    fields:
+      id:
+        type: ID
+      login:
+        type: String
