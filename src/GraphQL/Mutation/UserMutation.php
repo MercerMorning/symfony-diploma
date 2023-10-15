@@ -5,15 +5,20 @@ namespace App\GraphQL\Mutation;
 use App\DTO\ManageUserDTO;
 use App\Entity\User;
 use App\Manager\UserManager;
+use App\Message\CreateUserMessage;
+use Doctrine\ORM\EntityManagerInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class UserMutation implements MutationInterface, AliasedInterface
 {
-    public function __construct(private readonly UserManager $userManager)
+    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
     {
+        $this->entityManager = $entityManager;
+        $this->messageBus = $messageBus;
     }
 //    private $factionRepository;
 //
@@ -25,15 +30,18 @@ class UserMutation implements MutationInterface, AliasedInterface
     {
         $creds = $creds[0];
 
-        $userDTO = new ManageUserDTO();
-        $userDTO->login = $creds['login'];
-        $userDTO->password = $creds['password'];
-        $userDTO->roles = [];
-        $user = new User();
-        $this->userManager->saveUserFromDTO($user, $userDTO);
+        $this->messageBus->dispatch(new CreateUserMessage($creds['login'], $creds['password']));
+
+
+//        $userDTO = new ManageUserDTO();
+//        $userDTO->login = $creds['login'];
+//        $userDTO->password = $creds['password'];
+//        $userDTO->roles = [];
+//        $user = new User();
+//        $this->userManager->saveUserFromDTO($user, $userDTO);
 
         return [
-            'user' => $user,
+//            'user' => $user,
             'message' => 'User created successfully',
         ];
     }
